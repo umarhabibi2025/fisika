@@ -98,6 +98,67 @@
             0%, 100% { opacity: 0; transform: scale(0); }
             50% { opacity: 1; transform: scale(1); }
         }
+        .electric-bolt {
+            animation: electricBolt 2s ease-in-out infinite;
+        }
+        @keyframes electricBolt {
+            0%, 100% { 
+                opacity: 0.3; 
+                transform: scale(1) rotate(0deg);
+                filter: drop-shadow(0 0 5px #fbbf24);
+            }
+            25% { 
+                opacity: 1; 
+                transform: scale(1.1) rotate(2deg);
+                filter: drop-shadow(0 0 15px #f59e0b);
+            }
+            50% { 
+                opacity: 0.7; 
+                transform: scale(1.05) rotate(-1deg);
+                filter: drop-shadow(0 0 20px #fbbf24);
+            }
+            75% { 
+                opacity: 1; 
+                transform: scale(1.15) rotate(1deg);
+                filter: drop-shadow(0 0 10px #f59e0b);
+            }
+        }
+        .electric-current {
+            animation: electricCurrent 3s linear infinite;
+        }
+        @keyframes electricCurrent {
+            0% { 
+                transform: translateX(-100px) translateY(0px);
+                opacity: 0;
+            }
+            10% { 
+                opacity: 1;
+            }
+            90% { 
+                opacity: 1;
+            }
+            100% { 
+                transform: translateX(100px) translateY(0px);
+                opacity: 0;
+            }
+        }
+        .character-float {
+            animation: characterFloat 4s ease-in-out infinite;
+        }
+        @keyframes characterFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(1deg); }
+            50% { transform: translateY(-10px) rotate(0deg); }
+            75% { transform: translateY(-20px) rotate(-1deg); }
+        }
+        .electric-wire {
+            stroke-dasharray: 10, 5;
+            animation: electricFlow 2s linear infinite;
+        }
+        @keyframes electricFlow {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: 15; }
+        }
         .main-content {
             display: none;
         }
@@ -124,8 +185,152 @@
                 <div class="w-4 h-4 bg-blue-300 rounded-full"></div>
             </div>
 
+            <!-- Electric Bolts -->
+            <div class="absolute top-32 left-1/4 electric-bolt">
+                <svg width="40" height="60" viewBox="0 0 40 60">
+                    <path d="M20 5 L15 25 L25 25 L20 55 L25 35 L15 35 Z" fill="#fbbf24" stroke="#f59e0b" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="absolute bottom-40 right-1/4 electric-bolt" style="animation-delay: 1s;">
+                <svg width="35" height="50" viewBox="0 0 35 50">
+                    <path d="M17 3 L12 20 L22 20 L17 47 L22 30 L12 30 Z" fill="#60a5fa" stroke="#3b82f6" stroke-width="1"/>
+                </svg>
+            </div>
+
+            <!-- Animated Electric Wires -->
+            <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 1;">
+                <path class="electric-wire" d="M 100 150 Q 300 100 500 200 T 900 150" 
+                      stroke="#fbbf24" stroke-width="3" fill="none" opacity="0.6"/>
+                <path class="electric-wire" d="M 150 400 Q 400 350 650 450 T 950 400" 
+                      stroke="#60a5fa" stroke-width="3" fill="none" opacity="0.6" style="animation-delay: 1s;"/>
+                
+                <!-- Electric Current Particles -->
+                <circle class="electric-current" cx="0" cy="150" r="4" fill="#fbbf24">
+                    <animateMotion dur="3s" repeatCount="indefinite">
+                        <mpath href="#wire1"/>
+                    </animateMotion>
+                </circle>
+                <circle class="electric-current" cx="0" cy="400" r="4" fill="#60a5fa" style="animation-delay: 1.5s;">
+                    <animateMotion dur="3s" repeatCount="indefinite">
+                        <mpath href="#wire2"/>
+                    </animateMotion>
+                </circle>
+                
+                <defs>
+                    <path id="wire1" d="M 100 150 Q 300 100 500 200 T 900 150"/>
+                    <path id="wire2" d="M 150 400 Q 400 350 650 450 T 950 400"/>
+                </defs>
+            </svg>
+
+            <!-- Cartoon Characters -->
+            <!-- Main Characters -->
+            <div class="absolute top-16 right-16 character-float" style="animation-delay: 0.5s;">
+                <div class="w-20 h-20 bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                    <div class="text-3xl">⚡</div>
+                </div>
+                <div class="text-center mt-2 text-white text-sm font-bold drop-shadow-lg">Listrik</div>
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-red-400 rounded-full flex items-center justify-center text-xs">💫</div>
+            </div>
+            
+            <div class="absolute bottom-16 left-16 character-float" style="animation-delay: 1.5s;">
+                <div class="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+                    <div class="text-4xl">🔬</div>
+                </div>
+                <div class="text-center mt-2 text-white text-sm font-bold drop-shadow-lg">Prof. Sains</div>
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-xs">🌟</div>
+            </div>
+
+            <!-- Kid Characters -->
+            <div class="absolute top-1/2 left-8 character-float" style="animation-delay: 2s;">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg border-3 border-white">
+                    <div class="text-2xl">👦</div>
+                </div>
+                <div class="text-center mt-2 text-white text-xs font-bold drop-shadow-lg">Andi</div>
+                <div class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs">🧮</div>
+            </div>
+
+            <div class="absolute top-1/2 right-8 character-float" style="animation-delay: 2.5s;">
+                <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center shadow-lg border-3 border-white">
+                    <div class="text-2xl">👧</div>
+                </div>
+                <div class="text-center mt-2 text-white text-xs font-bold drop-shadow-lg">Sari</div>
+                <div class="absolute -top-1 -right-1 w-4 h-4 bg-purple-400 rounded-full flex items-center justify-center text-xs">📚</div>
+            </div>
+
+            <!-- Additional Kid Characters -->
+            <div class="absolute top-32 left-1/3 character-float" style="animation-delay: 3s;">
+                <div class="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center shadow-lg border-3 border-white">
+                    <div class="text-xl">👶</div>
+                </div>
+                <div class="text-center mt-1 text-white text-xs font-bold drop-shadow-lg">Budi</div>
+                <div class="absolute -top-1 -right-1 w-4 h-4 bg-blue-400 rounded-full flex items-center justify-center text-xs">🔋</div>
+            </div>
+
+            <div class="absolute bottom-32 right-1/3 character-float" style="animation-delay: 3.5s;">
+                <div class="w-14 h-14 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-lg border-3 border-white">
+                    <div class="text-xl">🧒</div>
+                </div>
+                <div class="text-center mt-1 text-white text-xs font-bold drop-shadow-lg">Dina</div>
+                <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-400 rounded-full flex items-center justify-center text-xs">🔌</div>
+            </div>
+
+            <div class="absolute top-40 left-1/2 character-float" style="animation-delay: 4s;">
+                <div class="w-12 h-12 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                    <div class="text-lg">👦</div>
+                </div>
+                <div class="text-center mt-1 text-white text-xs font-bold drop-shadow-lg">Riko</div>
+                <div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full flex items-center justify-center text-xs">💡</div>
+            </div>
+
+            <div class="absolute bottom-40 left-1/4 character-float" style="animation-delay: 4.5s;">
+                <div class="w-12 h-12 bg-gradient-to-br from-rose-400 to-rose-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                    <div class="text-lg">👧</div>
+                </div>
+                <div class="text-center mt-1 text-white text-xs font-bold drop-shadow-lg">Maya</div>
+                <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full flex items-center justify-center text-xs">⚙️</div>
+            </div>
+
+            <div class="absolute top-24 right-1/4 character-float" style="animation-delay: 5s;">
+                <div class="w-12 h-12 bg-gradient-to-br from-lime-400 to-lime-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                    <div class="text-lg">🧒</div>
+                </div>
+                <div class="text-center mt-1 text-white text-xs font-bold drop-shadow-lg">Toni</div>
+                <div class="absolute -top-1 -right-1 w-3 h-3 bg-blue-400 rounded-full flex items-center justify-center text-xs">🔧</div>
+            </div>
+
+            <!-- Floating School Items -->
+            <div class="absolute top-20 left-1/2 character-float" style="animation-delay: 5.5s;">
+                <div class="w-10 h-10 bg-gradient-to-br from-amber-300 to-amber-500 rounded-full flex items-center justify-center shadow-lg">
+                    <div class="text-lg">📐</div>
+                </div>
+            </div>
+
+            <div class="absolute bottom-20 right-1/2 character-float" style="animation-delay: 6s;">
+                <div class="w-10 h-10 bg-gradient-to-br from-emerald-300 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                    <div class="text-lg">✏️</div>
+                </div>
+            </div>
+
+            <!-- Electric Circuit Background -->
+            <div class="absolute inset-0 pointer-events-none opacity-20">
+                <svg width="100%" height="100%" viewBox="0 0 1200 800">
+                    <!-- Circuit Board Pattern -->
+                    <defs>
+                        <pattern id="circuit" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                            <rect width="100" height="100" fill="none"/>
+                            <path d="M 20 20 L 80 20 L 80 80 L 20 80 Z" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.3"/>
+                            <circle cx="20" cy="20" r="3" fill="#ffffff" opacity="0.5"/>
+                            <circle cx="80" cy="20" r="3" fill="#ffffff" opacity="0.5"/>
+                            <circle cx="80" cy="80" r="3" fill="#ffffff" opacity="0.5"/>
+                            <circle cx="20" cy="80" r="3" fill="#ffffff" opacity="0.5"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#circuit)"/>
+                </svg>
+            </div>
+
             <!-- Main Logo -->
-            <div class="lab-logo floating" onclick="enterLab()">
+            <div class="lab-logo floating" onclick="enterLab()" style="z-index: 10; position: relative;">
                 <!-- Lab Flask Icon -->
                 <div class="relative mb-8">
                     <svg width="200" height="200" viewBox="0 0 200 200" class="mx-auto">
@@ -140,13 +345,26 @@
                         <path d="M65 85 L135 85 L160 135 Q165 145 155 150 L45 150 Q35 145 40 135 Z" 
                               fill="url(#liquidGradient)" opacity="0.8"/>
                         
-                        <!-- Bubbles -->
+                        <!-- Electric Bubbles -->
                         <circle cx="90" cy="120" r="8" fill="#60a5fa" opacity="0.6" class="pulse-animation"/>
                         <circle cx="110" cy="110" r="6" fill="#93c5fd" opacity="0.7" class="pulse-animation" style="animation-delay: 0.3s;"/>
                         <circle cx="75" cy="130" r="5" fill="#dbeafe" opacity="0.8" class="pulse-animation" style="animation-delay: 0.6s;"/>
                         
-                        <!-- Lightning Bolt -->
-                        <path d="M100 60 L95 80 L105 80 L100 100 L105 80 L95 80 Z" fill="#fbbf24" class="glow"/>
+                        <!-- Electric Sparks -->
+                        <circle cx="85" cy="105" r="3" fill="#fbbf24" opacity="0.9" class="sparkle" style="animation-delay: 0.2s;"/>
+                        <circle cx="115" cy="125" r="2" fill="#f59e0b" opacity="0.8" class="sparkle" style="animation-delay: 0.8s;"/>
+                        <circle cx="95" cy="135" r="2.5" fill="#fbbf24" opacity="0.7" class="sparkle" style="animation-delay: 1.2s;"/>
+                        
+                        <!-- Animated Lightning Bolt -->
+                        <path d="M100 60 L95 80 L105 80 L100 100 L105 80 L95 80 Z" fill="#fbbf24" class="electric-bolt"/>
+                        
+                        <!-- Electric Aura -->
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0.3" class="pulse-animation" style="animation-duration: 3s;"/>
+                        <circle cx="100" cy="100" r="95" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.2" class="pulse-animation" style="animation-duration: 4s; animation-delay: 1s;"/>
+                        
+                        <!-- Electric Current Lines -->
+                        <path d="M 40 100 Q 70 90 100 100 T 160 100" stroke="#fbbf24" stroke-width="2" fill="none" opacity="0.6" class="electric-wire"/>
+                        <path d="M 50 120 Q 80 110 100 120 T 150 120" stroke="#60a5fa" stroke-width="2" fill="none" opacity="0.5" class="electric-wire" style="animation-delay: 1s;"/>
                         
                         <!-- Gradients -->
                         <defs>
@@ -160,6 +378,20 @@
                             </linearGradient>
                         </defs>
                     </svg>
+                    
+                    <!-- Floating Electric Particles around Flask -->
+                    <div class="absolute top-4 left-4 electric-current">
+                        <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                    </div>
+                    <div class="absolute top-8 right-6 electric-current" style="animation-delay: 0.5s;">
+                        <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                    </div>
+                    <div class="absolute bottom-6 left-8 electric-current" style="animation-delay: 1s;">
+                        <div class="w-2.5 h-2.5 bg-yellow-300 rounded-full"></div>
+                    </div>
+                    <div class="absolute bottom-4 right-4 electric-current" style="animation-delay: 1.5s;">
+                        <div class="w-1.5 h-1.5 bg-blue-300 rounded-full"></div>
+                    </div>
                 </div>
 
                 <!-- Title -->
@@ -182,24 +414,58 @@
                     </button>
                 </div>
                 
-                <!-- Features Preview -->
+                <!-- Features Preview with Animated Characters -->
                 <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-                    <div class="text-center text-white">
-                        <div class="text-4xl mb-2">📚</div>
+                    <div class="text-center text-white character-float" style="animation-delay: 0.2s;">
+                        <div class="w-16 h-16 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                            <div class="text-3xl">📚</div>
+                        </div>
                         <div class="text-sm font-medium">Teori Lengkap</div>
+                        <div class="text-xs opacity-80 mt-1">Konsep & Rumus</div>
                     </div>
-                    <div class="text-center text-white">
-                        <div class="text-4xl mb-2">⚡</div>
+                    <div class="text-center text-white character-float" style="animation-delay: 0.4s;">
+                        <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg electric-bolt">
+                            <div class="text-3xl">⚡</div>
+                        </div>
                         <div class="text-sm font-medium">Simulasi Real-time</div>
+                        <div class="text-xs opacity-80 mt-1">Rangkaian Interaktif</div>
                     </div>
-                    <div class="text-center text-white">
-                        <div class="text-4xl mb-2">🧮</div>
+                    <div class="text-center text-white character-float" style="animation-delay: 0.6s;">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                            <div class="text-3xl">🧮</div>
+                        </div>
                         <div class="text-sm font-medium">Kalkulator Pintar</div>
+                        <div class="text-xs opacity-80 mt-1">Hitung Otomatis</div>
                     </div>
-                    <div class="text-center text-white">
-                        <div class="text-4xl mb-2">📝</div>
+                    <div class="text-center text-white character-float" style="animation-delay: 0.8s;">
+                        <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                            <div class="text-3xl">📝</div>
+                        </div>
                         <div class="text-sm font-medium">Kuis Interaktif</div>
+                        <div class="text-xs opacity-80 mt-1">Uji Pemahaman</div>
                     </div>
+                </div>
+
+                <!-- Additional Floating Mascots -->
+                <div class="absolute top-24 left-1/3 character-float" style="animation-delay: 3s;">
+                    <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-full flex items-center justify-center shadow-lg">
+                        <div class="text-xl">🔋</div>
+                    </div>
+                    <div class="text-center mt-1 text-white text-xs font-bold">Baterai</div>
+                </div>
+
+                <div class="absolute bottom-24 right-1/3 character-float" style="animation-delay: 3.5s;">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                        <div class="text-xl">🔌</div>
+                    </div>
+                    <div class="text-center mt-1 text-white text-xs font-bold">Listrik</div>
+                </div>
+
+                <div class="absolute top-40 left-1/2 character-float" style="animation-delay: 4s;">
+                    <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg">
+                        <div class="text-lg">💡</div>
+                    </div>
+                    <div class="text-center mt-1 text-white text-xs font-bold">Lampu</div>
                 </div>
             </div>
         </div>
@@ -838,6 +1104,148 @@
     </div>
     </div> <!-- End of mainContent div -->
 
+    <!-- Background Music -->
+    <div id="musicControls" class="fixed top-4 right-4 z-50 bg-white bg-opacity-90 rounded-full p-3 shadow-lg">
+        <button id="musicToggle" onclick="toggleMusic()" class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg">
+            <span id="musicIcon">🎵</span>
+        </button>
+        <div class="text-center mt-1 text-xs text-gray-600">Musik</div>
+    </div>
+
+    <!-- Audio Context for Background Music -->
+    <script>
+        // Audio Context and Music System
+        let audioContext;
+        let musicPlaying = false;
+        let currentOscillators = [];
+        let musicGainNode;
+
+        // Musical notes frequencies (in Hz)
+        const notes = {
+            'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
+            'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.00, 'B5': 987.77
+        };
+
+        // Happy educational melody
+        const melody = [
+            {note: 'C4', duration: 0.5}, {note: 'E4', duration: 0.5}, {note: 'G4', duration: 0.5}, {note: 'C5', duration: 0.5},
+            {note: 'G4', duration: 0.5}, {note: 'E4', duration: 0.5}, {note: 'C4', duration: 1},
+            {note: 'D4', duration: 0.5}, {note: 'F4', duration: 0.5}, {note: 'A4', duration: 0.5}, {note: 'D5', duration: 0.5},
+            {note: 'A4', duration: 0.5}, {note: 'F4', duration: 0.5}, {note: 'D4', duration: 1},
+            {note: 'E4', duration: 0.5}, {note: 'G4', duration: 0.5}, {note: 'B4', duration: 0.5}, {note: 'E5', duration: 0.5},
+            {note: 'B4', duration: 0.5}, {note: 'G4', duration: 0.5}, {note: 'E4', duration: 1},
+            {note: 'C5', duration: 0.5}, {note: 'G4', duration: 0.5}, {note: 'E4', duration: 0.5}, {note: 'C4', duration: 1.5}
+        ];
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                musicGainNode = audioContext.createGain();
+                musicGainNode.connect(audioContext.destination);
+                musicGainNode.gain.value = 0.1; // Low volume for background music
+            }
+        }
+
+        function playNote(frequency, duration, startTime = 0) {
+            if (!audioContext) return;
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(musicGainNode);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            // Envelope for smooth sound
+            const now = audioContext.currentTime + startTime;
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.3, now + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
+            
+            oscillator.start(now);
+            oscillator.stop(now + duration);
+            
+            currentOscillators.push(oscillator);
+            
+            // Clean up
+            oscillator.onended = () => {
+                const index = currentOscillators.indexOf(oscillator);
+                if (index > -1) {
+                    currentOscillators.splice(index, 1);
+                }
+            };
+        }
+
+        function playMelody() {
+            if (!audioContext || !musicPlaying) return;
+            
+            let currentTime = 0;
+            melody.forEach(({note, duration}) => {
+                if (notes[note]) {
+                    playNote(notes[note], duration, currentTime);
+                }
+                currentTime += duration;
+            });
+            
+            // Loop the melody
+            setTimeout(() => {
+                if (musicPlaying) {
+                    playMelody();
+                }
+            }, currentTime * 1000 + 1000); // Add 1 second pause between loops
+        }
+
+        function toggleMusic() {
+            initAudioContext();
+            
+            if (musicPlaying) {
+                // Stop music
+                musicPlaying = false;
+                currentOscillators.forEach(osc => {
+                    try {
+                        osc.stop();
+                    } catch (e) {
+                        // Oscillator might already be stopped
+                    }
+                });
+                currentOscillators = [];
+                document.getElementById('musicIcon').textContent = '🔇';
+                document.getElementById('musicToggle').classList.remove('from-purple-500', 'to-pink-500');
+                document.getElementById('musicToggle').classList.add('from-gray-400', 'to-gray-500');
+            } else {
+                // Start music
+                musicPlaying = true;
+                document.getElementById('musicIcon').textContent = '🎵';
+                document.getElementById('musicToggle').classList.remove('from-gray-400', 'to-gray-500');
+                document.getElementById('musicToggle').classList.add('from-purple-500', 'to-pink-500');
+                playMelody();
+            }
+        }
+
+        // Sound effects for interactions
+        function playClickSound() {
+            if (!audioContext) return;
+            playNote(notes['C5'], 0.1);
+        }
+
+        function playSuccessSound() {
+            if (!audioContext) return;
+            playNote(notes['C4'], 0.2);
+            playNote(notes['E4'], 0.2, 0.1);
+            playNote(notes['G4'], 0.2, 0.2);
+            playNote(notes['C5'], 0.4, 0.3);
+        }
+
+        function playErrorSound() {
+            if (!audioContext) return;
+            playNote(notes['B4'], 0.2);
+            playNote(notes['A4'], 0.2, 0.1);
+            playNote(notes['G4'], 0.4, 0.2);
+        }
+    </script>
+
     <script>
         // Global variables
         let currentTab = 'teori';
@@ -850,6 +1258,7 @@
 
         // Landing page functions
         function enterLab() {
+            playClickSound();
             document.getElementById('landingPage').style.display = 'none';
             document.getElementById('mainContent').classList.add('active');
         }
@@ -925,6 +1334,8 @@
 
         // Tab switching function
         function showTab(tabName) {
+            playClickSound();
+            
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1547,6 +1958,8 @@
 
         // Enhanced quiz functions
         function selectAnswer(answerIndex) {
+            playClickSound();
+            
             // Remove previous selection
             document.querySelectorAll('.option-btn').forEach(btn => {
                 btn.classList.remove('border-blue-500', 'bg-blue-100');
@@ -1620,12 +2033,18 @@
                 }
             });
             
+            // Play appropriate sound based on score
+            const percentage = Math.round((quizScore / quizQuestions.length) * 100);
+            if (percentage >= 70) {
+                playSuccessSound();
+            } else {
+                playErrorSound();
+            }
+            
             // Show results
             document.getElementById('quizContainer').classList.add('hidden');
             document.getElementById('quizResults').classList.remove('hidden');
             document.getElementById('finalScore').textContent = quizScore + '/' + quizQuestions.length;
-            
-            const percentage = Math.round((quizScore / quizQuestions.length) * 100);
             document.getElementById('scorePercentage').textContent = percentage + '%';
             
             let message = '';
@@ -1715,5 +2134,5 @@
             setMultimeterMode('voltage');
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98472a7f41ef243f',t:'MTc1ODc2ODEyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98473f54d4ffec6e',t:'MTc1ODc2ODk3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
