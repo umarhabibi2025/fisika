@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorium Virtual - Listrik Dinamis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .circuit-wire {
+            stroke: #2563eb;
+            stroke-width: 3;
+            fill: none;
+        }
+        .component {
+            transition: all 0.3s ease;
+        }
+        .component:hover {
+            transform: scale(1.05);
+        }
+        .electron {
+            animation: flow 2s linear infinite;
+        }
+        @keyframes flow {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(200px); opacity: 0; }
+        }
+        .glow {
+            filter: drop-shadow(0 0 10px #fbbf24);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .formula-box {
+            background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+            border-left: 4px solid #0277bd;
+        }
+        .calculator-btn {
+            transition: all 0.2s ease;
+        }
+        .calculator-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .multimeter {
+            background: linear-gradient(145deg, #2d3748, #1a202c);
+            border-radius: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .lcd-display {
+            background: #1a202c;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        /* Landing Page Styles */
+        .landing-page {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lab-logo {
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .lab-logo:hover {
+            transform: scale(1.05) rotate(2deg);
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .sparkle {
+            animation: sparkle 1.5s linear infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        .main-content {
+            display: none;
+        }
+        .main-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Landing Page -->
+    <div id="landingPage" class="landing-page">
+        <div class="text-center">
+            <!-- Decorative Elements -->
+            <div class="absolute top-20 left-20 sparkle">
+                <div class="w-4 h-4 bg-yellow-300 rounded-full"></div>
+            </div>
+            <div class="absolute top-40 right-32 sparkle" style="animation-delay: 0.5s;">
+                <div class="w-3 h-3 bg-pink-300 rounded-full"></div>
+            </div>
+            <div class="absolute bottom-32 left-40 sparkle" style="animation-delay: 1s;">
+                <div class="w-5 h-5 bg-green-300 rounded-full"></div>
+            </div>
+            <div class="absolute bottom-20 right-20 sparkle" style="animation-delay: 1.5s;">
+                <div class="w-4 h-4 bg-blue-300 rounded-full"></div>
+            </div>
+
+            <!-- Main Logo -->
+            <div class="lab-logo floating" onclick="enterLab()">
+                <!-- Lab Flask Icon -->
+                <div class="relative mb-8">
+                    <svg width="200" height="200" viewBox="0 0 200 200" class="mx-auto">
+                        <!-- Flask Body -->
+                        <path d="M60 80 L60 40 Q60 30 70 30 L130 30 Q140 30 140 40 L140 80 L170 140 Q180 160 165 170 L35 170 Q20 160 30 140 Z" 
+                              fill="url(#flaskGradient)" stroke="#4f46e5" stroke-width="3"/>
+                        
+                        <!-- Flask Neck -->
+                        <rect x="80" y="20" width="40" height="20" fill="#6366f1" rx="5"/>
+                        
+                        <!-- Liquid -->
+                        <path d="M65 85 L135 85 L160 135 Q165 145 155 150 L45 150 Q35 145 40 135 Z" 
+                              fill="url(#liquidGradient)" opacity="0.8"/>
+                        
+                        <!-- Bubbles -->
+                        <circle cx="90" cy="120" r="8" fill="#60a5fa" opacity="0.6" class="pulse-animation"/>
+                        <circle cx="110" cy="110" r="6" fill="#93c5fd" opacity="0.7" class="pulse-animation" style="animation-delay: 0.3s;"/>
+                        <circle cx="75" cy="130" r="5" fill="#dbeafe" opacity="0.8" class="pulse-animation" style="animation-delay: 0.6s;"/>
+                        
+                        <!-- Lightning Bolt -->
+                        <path d="M100 60 L95 80 L105 80 L100 100 L105 80 L95 80 Z" fill="#fbbf24" class="glow"/>
+                        
+                        <!-- Gradients -->
+                        <defs>
+                            <linearGradient id="flaskGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#e0e7ff"/>
+                                <stop offset="100%" style="stop-color:#c7d2fe"/>
+                            </linearGradient>
+                            <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6"/>
+                                <stop offset="100%" style="stop-color:#1d4ed8"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-6xl font-bold text-white mb-4 drop-shadow-lg">
+                    🔬 Lab Virtual
+                </h1>
+                <h2 class="text-3xl font-semibold text-blue-100 mb-6">
+                    Listrik Dinamis
+                </h2>
+                
+                <!-- Subtitle -->
+                <p class="text-xl text-blue-200 mb-8 max-w-2xl mx-auto leading-relaxed">
+                    Laboratorium Virtual Interaktif untuk Pembelajaran Fisika Kelas XII SMA
+                </p>
+                
+                <!-- Enter Button -->
+                <div class="pulse-animation">
+                    <button class="bg-white text-purple-700 px-8 py-4 rounded-full text-xl font-bold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300">
+                        🚀 Masuk ke Laboratorium
+                    </button>
+                </div>
+                
+                <!-- Features Preview -->
+                <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                    <div class="text-center text-white">
+                        <div class="text-4xl mb-2">📚</div>
+                        <div class="text-sm font-medium">Teori Lengkap</div>
+                    </div>
+                    <div class="text-center text-white">
+                        <div class="text-4xl mb-2">⚡</div>
+                        <div class="text-sm font-medium">Simulasi Real-time</div>
+                    </div>
+                    <div class="text-center text-white">
+                        <div class="text-4xl mb-2">🧮</div>
+                        <div class="text-sm font-medium">Kalkulator Pintar</div>
+                    </div>
+                    <div class="text-center text-white">
+                        <div class="text-4xl mb-2">📝</div>
+                        <div class="text-sm font-medium">Kuis Interaktif</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content (Hidden Initially) -->
+    <div id="mainContent" class="main-content">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 shadow-lg">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">🔬 Laboratorium Virtual Listrik Dinamis</h1>
+                    <p class="text-blue-100">Kelas XII SMA - Fisika | Lengkap & Interaktif</p>
+                </div>
+                <button onclick="backToHome()" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2">
+                    <span>🏠</span>
+                    <span>Kembali ke Beranda</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-wrap space-x-1">
+                <button onclick="showTab('teori')" class="tab-btn px-4 py-3 font-medium text-blue-600 border-b-2 border-blue-600 bg-blue-50">
+                    📚 Teori
+                </button>
+                <button onclick="showTab('simulasi')" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                    ⚡ Simulasi
+                </button>
+                <button onclick="showTab('kalkulator')" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                    🧮 Kalkulator
+                </button>
+                <button onclick="showTab('eksperimen')" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                    🧪 Eksperimen
+                </button>
+                <button onclick="showTab('multimeter')" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                    📟 Multimeter
+                </button>
+                <button onclick="showTab('kuis')" class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                    📝 Kuis
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Tab Teori -->
+        <div id="teori" class="tab-content active">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Konsep Dasar -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">🔋 Konsep Dasar</h2>
+                    <div class="space-y-4">
+                        <div class="formula-box p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-2">Hukum Ohm</h3>
+                            <p class="text-2xl font-bold text-blue-600 mb-2">V = I × R</p>
+                            <p class="text-sm text-gray-600">V = Tegangan (Volt)<br>I = Arus (Ampere)<br>R = Hambatan (Ohm)</p>
+                        </div>
+                        <div class="formula-box p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-2">Daya Listrik</h3>
+                            <p class="text-xl font-bold text-green-600 mb-2">P = V × I = I²R = V²/R</p>
+                            <p class="text-sm text-gray-600">P = Daya (Watt)</p>
+                        </div>
+                        <div class="formula-box p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-2">Energi Listrik</h3>
+                            <p class="text-xl font-bold text-purple-600 mb-2">W = P × t = V × I × t</p>
+                            <p class="text-sm text-gray-600">W = Energi (Joule)<br>t = waktu (sekon)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rangkaian Listrik -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">🔌 Rangkaian Listrik</h2>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h3 class="font-semibold text-lg">Rangkaian Seri</h3>
+                            <p class="text-gray-600">• Arus sama di semua komponen</p>
+                            <p class="text-gray-600">• Tegangan terbagi</p>
+                            <p class="text-gray-600">• R<sub>total</sub> = R₁ + R₂ + R₃ + ...</p>
+                            <p class="text-gray-600">• I<sub>total</sub> = I₁ = I₂ = I₃</p>
+                        </div>
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <h3 class="font-semibold text-lg">Rangkaian Paralel</h3>
+                            <p class="text-gray-600">• Tegangan sama di semua cabang</p>
+                            <p class="text-gray-600">• Arus terbagi</p>
+                            <p class="text-gray-600">• 1/R<sub>total</sub> = 1/R₁ + 1/R₂ + 1/R₃ + ...</p>
+                            <p class="text-gray-600">• V<sub>total</sub> = V₁ = V₂ = V₃</p>
+                        </div>
+                        <div class="border-l-4 border-purple-500 pl-4">
+                            <h3 class="font-semibold text-lg">Hukum Kirchhoff</h3>
+                            <p class="text-gray-600">• KCL: Σ I<sub>masuk</sub> = Σ I<sub>keluar</sub></p>
+                            <p class="text-gray-600">• KVL: Σ V = 0 (dalam loop tertutup)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aplikasi & Contoh -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">💡 Aplikasi Praktis</h2>
+                    <div class="space-y-4">
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-2">Instalasi Rumah</h3>
+                            <p class="text-gray-600">Lampu-lampu di rumah dipasang paralel agar dapat dikendalikan terpisah</p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-2">Baterai Senter</h3>
+                            <p class="text-gray-600">Baterai dalam senter disusun seri untuk menambah tegangan total</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-2">Pengaman Listrik</h3>
+                            <p class="text-gray-600">Sekring dan MCB melindungi rangkaian dari arus berlebih</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-2">Efisiensi Energi</h3>
+                            <p class="text-gray-600">Lampu LED lebih efisien karena daya rendah dengan cahaya terang</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Simulasi -->
+        <div id="simulasi" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">⚡ Simulasi Rangkaian Listrik Interaktif</h2>
+                
+                <!-- Controls -->
+                <div class="grid lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tegangan (V)</label>
+                        <input type="range" id="voltage" min="1" max="24" value="12" class="w-full mb-2" oninput="updateCircuit()">
+                        <span id="voltageValue" class="text-lg font-bold text-blue-600">12 V</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hambatan R1 (Ω)</label>
+                        <input type="range" id="resistance1" min="1" max="20" value="4" class="w-full mb-2" oninput="updateCircuit()">
+                        <span id="resistance1Value" class="text-lg font-bold text-red-600">4 Ω</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hambatan R2 (Ω)</label>
+                        <input type="range" id="resistance2" min="1" max="20" value="6" class="w-full mb-2" oninput="updateCircuit()">
+                        <span id="resistance2Value" class="text-lg font-bold text-red-600">6 Ω</span>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Rangkaian</label>
+                        <select id="circuitType" class="w-full p-2 border rounded mb-2" onchange="updateCircuit()">
+                            <option value="series">Seri</option>
+                            <option value="parallel">Paralel</option>
+                            <option value="mixed">Campuran</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Circuit Diagram -->
+                <div class="bg-gray-100 rounded-lg p-6 mb-6 overflow-x-auto">
+                    <svg id="circuitSvg" width="100%" height="400" viewBox="0 0 900 400">
+                        <!-- Battery -->
+                        <g id="battery" class="component">
+                            <rect x="50" y="180" width="50" height="30" fill="#ff6b6b" stroke="#d63031" stroke-width="2" rx="5"/>
+                            <text x="75" y="200" text-anchor="middle" fill="white" font-size="14" font-weight="bold">+</text>
+                            <text x="75" y="170" text-anchor="middle" fill="#2d3436" font-size="14" font-weight="bold">Baterai</text>
+                            <text x="75" y="230" text-anchor="middle" fill="#2d3436" font-size="12" id="batteryVoltage">12V</text>
+                        </g>
+
+                        <!-- Main Wires -->
+                        <path id="wire1" class="circuit-wire" d="M 100 195 L 200 195"/>
+                        <path id="wire2" class="circuit-wire" d="M 400 195 L 500 195"/>
+                        <path id="wire3" class="circuit-wire" d="M 700 195 L 800 195"/>
+                        <path id="wire4" class="circuit-wire" d="M 800 195 L 800 280 L 50 280 L 50 195"/>
+
+                        <!-- Resistor 1 -->
+                        <g id="resistor1" class="component">
+                            <rect x="200" y="180" width="80" height="30" fill="#74b9ff" stroke="#0984e3" stroke-width="2" rx="5"/>
+                            <text x="240" y="200" text-anchor="middle" fill="white" font-size="12" font-weight="bold">R1</text>
+                            <text x="240" y="170" text-anchor="middle" fill="#2d3436" font-size="12">Resistor 1</text>
+                            <text x="240" y="230" text-anchor="middle" fill="#2d3436" font-size="12" id="r1Value">4Ω</text>
+                            <text x="240" y="245" text-anchor="middle" fill="#e17055" font-size="11" id="r1Current">I1 = 1.2A</text>
+                            <text x="240" y="260" text-anchor="middle" fill="#00b894" font-size="11" id="r1Power">P1 = 5.8W</text>
+                        </g>
+
+                        <!-- Resistor 2 -->
+                        <g id="resistor2" class="component">
+                            <rect x="500" y="180" width="80" height="30" fill="#74b9ff" stroke="#0984e3" stroke-width="2" rx="5"/>
+                            <text x="540" y="200" text-anchor="middle" fill="white" font-size="12" font-weight="bold">R2</text>
+                            <text x="540" y="170" text-anchor="middle" fill="#2d3436" font-size="12">Resistor 2</text>
+                            <text x="540" y="230" text-anchor="middle" fill="#2d3436" font-size="12" id="r2Value">6Ω</text>
+                            <text x="540" y="245" text-anchor="middle" fill="#e17055" font-size="11" id="r2Current">I2 = 1.2A</text>
+                            <text x="540" y="260" text-anchor="middle" fill="#00b894" font-size="11" id="r2Power">P2 = 8.6W</text>
+                        </g>
+
+                        <!-- Parallel branch wires (hidden by default) -->
+                        <path id="parallelWire1" class="circuit-wire" style="display: none;" d="M 200 195 L 200 120 L 580 120 L 580 180"/>
+                        <path id="parallelWire2" class="circuit-wire" style="display: none;" d="M 280 195 L 280 120"/>
+                        <path id="parallelWire3" class="circuit-wire" style="display: none;" d="M 500 195 L 500 120"/>
+                        <path id="parallelWire4" class="circuit-wire" style="display: none;" d="M 580 210 L 580 280 L 280 280 L 280 210"/>
+
+                        <!-- Current Flow Animation -->
+                        <g id="currentFlow">
+                            <circle class="electron" cx="120" cy="195" r="4" fill="#fbbf24"/>
+                            <circle class="electron" cx="150" cy="195" r="4" fill="#fbbf24" style="animation-delay: 0.3s"/>
+                            <circle class="electron" cx="180" cy="195" r="4" fill="#fbbf24" style="animation-delay: 0.6s"/>
+                        </g>
+
+                        <!-- Measurements Display -->
+                        <g id="measurements">
+                            <text x="150" y="150" text-anchor="middle" fill="#e17055" font-size="16" font-weight="bold" id="totalCurrentText">I total = 1.2 A</text>
+                            <text x="450" y="350" text-anchor="middle" fill="#00b894" font-size="16" font-weight="bold" id="totalPowerText">P total = 14.4 W</text>
+                        </g>
+
+                        <!-- Switch -->
+                        <g id="switch" class="component" onclick="toggleSwitch()">
+                            <rect x="350" y="185" width="40" height="20" fill="#fdcb6e" stroke="#e17055" stroke-width="2" rx="3"/>
+                            <text x="370" y="198" text-anchor="middle" fill="#2d3436" font-size="10" font-weight="bold" id="switchText">ON</text>
+                            <text x="370" y="175" text-anchor="middle" fill="#2d3436" font-size="12">Saklar</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Results Dashboard -->
+                <div class="grid lg:grid-cols-5 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-blue-600" id="totalCurrentResult">1.2</div>
+                        <div class="text-sm text-gray-600">Arus Total (A)</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-green-600" id="totalPowerResult">14.4</div>
+                        <div class="text-sm text-gray-600">Daya Total (W)</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-purple-600" id="totalEnergyResult">51.8</div>
+                        <div class="text-sm text-gray-600">Energi/jam (kJ)</div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-red-600" id="totalResistanceResult">10.0</div>
+                        <div class="text-sm text-gray-600">R Total (Ω)</div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-yellow-600" id="efficiencyResult">85</div>
+                        <div class="text-sm text-gray-600">Efisiensi (%)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Kalkulator -->
+        <div id="kalkulator" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">🧮 Kalkulator Listrik Dinamis</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Hukum Ohm Calculator -->
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-4">Kalkulator Hukum Ohm</h3>
+                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Tegangan (V)</label>
+                                    <input type="number" id="calcV" class="w-full p-2 border rounded" placeholder="Volt">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Arus (A)</label>
+                                    <input type="number" id="calcI" class="w-full p-2 border rounded" placeholder="Ampere">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Hambatan (Ω)</label>
+                                    <input type="number" id="calcR" class="w-full p-2 border rounded" placeholder="Ohm">
+                                </div>
+                            </div>
+                            <button onclick="calculateOhm()" class="calculator-btn bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">
+                                Hitung
+                            </button>
+                            <div id="ohmResult" class="mt-4 p-3 bg-white rounded border-l-4 border-blue-500 hidden">
+                                <div class="font-semibold">Hasil:</div>
+                                <div id="ohmResultText"></div>
+                            </div>
+                        </div>
+
+                        <!-- Power Calculator -->
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-4">Kalkulator Daya</h3>
+                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Daya (W)</label>
+                                    <input type="number" id="calcP" class="w-full p-2 border rounded" placeholder="Watt">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Tegangan (V)</label>
+                                    <input type="number" id="calcPV" class="w-full p-2 border rounded" placeholder="Volt">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Arus (A)</label>
+                                    <input type="number" id="calcPI" class="w-full p-2 border rounded" placeholder="Ampere">
+                                </div>
+                            </div>
+                            <button onclick="calculatePower()" class="calculator-btn bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full">
+                                Hitung Daya
+                            </button>
+                            <div id="powerResult" class="mt-4 p-3 bg-white rounded border-l-4 border-green-500 hidden">
+                                <div class="font-semibold">Hasil:</div>
+                                <div id="powerResultText"></div>
+                            </div>
+                        </div>
+
+                        <!-- Series Resistance Calculator -->
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-4">Kalkulator Hambatan Seri</h3>
+                            <div id="seriesInputs" class="space-y-2 mb-4">
+                                <input type="number" class="series-input w-full p-2 border rounded" placeholder="R1 (Ohm)">
+                                <input type="number" class="series-input w-full p-2 border rounded" placeholder="R2 (Ohm)">
+                            </div>
+                            <div class="flex gap-2 mb-4">
+                                <button onclick="addSeriesInput()" class="bg-purple-400 text-white px-3 py-1 rounded text-sm">+ Tambah</button>
+                                <button onclick="removeSeriesInput()" class="bg-red-400 text-white px-3 py-1 rounded text-sm">- Kurangi</button>
+                            </div>
+                            <button onclick="calculateSeries()" class="calculator-btn bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 w-full">
+                                Hitung Seri
+                            </button>
+                            <div id="seriesResult" class="mt-4 p-3 bg-white rounded border-l-4 border-purple-500 hidden">
+                                <div class="font-semibold">Hasil:</div>
+                                <div id="seriesResultText"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 Hasil & Analisis</h2>
+                    
+                    <!-- Parallel Resistance Calculator -->
+                    <div class="bg-orange-50 p-4 rounded-lg mb-6">
+                        <h3 class="font-semibold text-lg mb-4">Kalkulator Hambatan Paralel</h3>
+                        <div id="parallelInputs" class="space-y-2 mb-4">
+                            <input type="number" class="parallel-input w-full p-2 border rounded" placeholder="R1 (Ohm)">
+                            <input type="number" class="parallel-input w-full p-2 border rounded" placeholder="R2 (Ohm)">
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <button onclick="addParallelInput()" class="bg-orange-400 text-white px-3 py-1 rounded text-sm">+ Tambah</button>
+                            <button onclick="removeParallelInput()" class="bg-red-400 text-white px-3 py-1 rounded text-sm">- Kurangi</button>
+                        </div>
+                        <button onclick="calculateParallel()" class="calculator-btn bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 w-full">
+                            Hitung Paralel
+                        </button>
+                        <div id="parallelResult" class="mt-4 p-3 bg-white rounded border-l-4 border-orange-500 hidden">
+                            <div class="font-semibold">Hasil:</div>
+                            <div id="parallelResultText"></div>
+                        </div>
+                    </div>
+
+                    <!-- Energy Cost Calculator -->
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-4">Kalkulator Biaya Listrik</h3>
+                        <div class="space-y-3 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Daya Alat (W)</label>
+                                <input type="number" id="devicePower" class="w-full p-2 border rounded" placeholder="Watt">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Waktu Pemakaian (jam/hari)</label>
+                                <input type="number" id="usageHours" class="w-full p-2 border rounded" placeholder="Jam">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Tarif Listrik (Rp/kWh)</label>
+                                <input type="number" id="electricRate" class="w-full p-2 border rounded" placeholder="1444" value="1444">
+                            </div>
+                        </div>
+                        <button onclick="calculateCost()" class="calculator-btn bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 w-full">
+                            Hitung Biaya
+                        </button>
+                        <div id="costResult" class="mt-4 p-3 bg-white rounded border-l-4 border-yellow-500 hidden">
+                            <div class="font-semibold">Hasil:</div>
+                            <div id="costResultText"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Eksperimen -->
+        <div id="eksperimen" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">🧪 Eksperimen Virtual</h2>
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-lg mb-2">Eksperimen 1: Verifikasi Hukum Ohm</h3>
+                            <p class="text-gray-600 mb-3">Buktikan hubungan linear antara tegangan dan arus pada hambatan tetap</p>
+                            <div class="flex gap-2">
+                                <button onclick="startExperiment(1)" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    Mulai Eksperimen
+                                </button>
+                                <button onclick="resetExperiment(1)" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-lg mb-2">Eksperimen 2: Rangkaian Seri vs Paralel</h3>
+                            <p class="text-gray-600 mb-3">Bandingkan karakteristik arus, tegangan, dan hambatan total</p>
+                            <div class="flex gap-2">
+                                <button onclick="startExperiment(2)" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                    Mulai Eksperimen
+                                </button>
+                                <button onclick="resetExperiment(2)" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-lg mb-2">Eksperimen 3: Analisis Daya</h3>
+                            <p class="text-gray-600 mb-3">Pelajari hubungan daya dengan tegangan dan hambatan</p>
+                            <div class="flex gap-2">
+                                <button onclick="startExperiment(3)" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                                    Mulai Eksperimen
+                                </button>
+                                <button onclick="resetExperiment(3)" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-lg mb-2">Eksperimen 4: Efek Suhu pada Hambatan</h3>
+                            <p class="text-gray-600 mb-3">Simulasi perubahan hambatan terhadap suhu</p>
+                            <div class="flex gap-2">
+                                <button onclick="startExperiment(4)" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                                    Mulai Eksperimen
+                                </button>
+                                <button onclick="resetExperiment(4)" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">📊 Hasil Eksperimen</h2>
+                    <div id="experimentResults" class="space-y-4">
+                        <div class="text-center text-gray-500 py-8">
+                            <div class="text-4xl mb-2">🔬</div>
+                            <p>Pilih eksperimen untuk melihat hasil dan analisis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Multimeter -->
+        <div id="multimeter" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">📟 Multimeter Digital</h2>
+                    
+                    <!-- Multimeter Device -->
+                    <div class="multimeter p-6 rounded-xl mb-6">
+                        <div class="lcd-display p-4 rounded-lg mb-4 text-center">
+                            <div class="text-3xl font-bold mb-2" id="multimeterDisplay">0.000</div>
+                            <div class="text-sm" id="multimeterUnit">V DC</div>
+                        </div>
+                        
+                        <!-- Function Selector -->
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <button onclick="setMultimeterMode('voltage')" class="multimeter-btn bg-red-600 text-white p-2 rounded text-sm hover:bg-red-700">
+                                V DC
+                            </button>
+                            <button onclick="setMultimeterMode('current')" class="multimeter-btn bg-yellow-600 text-white p-2 rounded text-sm hover:bg-yellow-700">
+                                A DC
+                            </button>
+                            <button onclick="setMultimeterMode('resistance')" class="multimeter-btn bg-blue-600 text-white p-2 rounded text-sm hover:bg-blue-700">
+                                Ω
+                            </button>
+                        </div>
+
+                        <!-- Range Selector -->
+                        <div class="mb-4">
+                            <label class="block text-white text-sm mb-2">Range:</label>
+                            <select id="multimeterRange" class="w-full p-2 rounded bg-gray-700 text-white">
+                                <option value="auto">AUTO</option>
+                                <option value="200m">200m</option>
+                                <option value="2">2</option>
+                                <option value="20">20</option>
+                                <option value="200">200</option>
+                                <option value="2000">2000</option>
+                            </select>
+                        </div>
+
+                        <!-- Test Points -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <div class="w-8 h-8 bg-red-500 rounded-full mx-auto mb-2"></div>
+                                <div class="text-white text-xs">COM</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="w-8 h-8 bg-black rounded-full mx-auto mb-2"></div>
+                                <div class="text-white text-xs">V/Ω/A</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Measurement Controls -->
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-semibold mb-3">Pengukuran Manual</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Nilai Sebenarnya</label>
+                                    <input type="number" id="actualValue" class="w-full p-2 border rounded" placeholder="Masukkan nilai">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Satuan</label>
+                                    <select id="actualUnit" class="w-full p-2 border rounded">
+                                        <option value="V">Volt (V)</option>
+                                        <option value="A">Ampere (A)</option>
+                                        <option value="Ω">Ohm (Ω)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button onclick="measureValue()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full mt-3">
+                                Ukur
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Log Pengukuran</h2>
+                    
+                    <div id="measurementLog" class="space-y-3 mb-6 max-h-96 overflow-y-auto">
+                        <div class="text-center text-gray-500 py-8">
+                            <div class="text-4xl mb-2">📊</div>
+                            <p>Belum ada pengukuran</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="clearLog()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                            Hapus Log
+                        </button>
+                        <button onclick="exportLog()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Export Data
+                        </button>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold mb-3">Statistik Pengukuran</h3>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <div class="text-gray-600">Total Pengukuran:</div>
+                                <div class="font-bold" id="totalMeasurements">0</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">Rata-rata:</div>
+                                <div class="font-bold" id="averageValue">-</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">Nilai Maksimum:</div>
+                                <div class="font-bold" id="maxValue">-</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600">Nilai Minimum:</div>
+                                <div class="font-bold" id="minValue">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Kuis -->
+        <div id="kuis" class="tab-content">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">📝 Kuis Listrik Dinamis</h2>
+                
+                <div id="quizContainer">
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-lg font-medium">Soal <span id="currentQuestion">1</span> dari <span id="totalQuestions">10</span></span>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Skor: <span id="score">0</span></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                            <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 10%"></div>
+                        </div>
+                    </div>
+
+                    <div id="questionContainer" class="mb-6">
+                        <h3 class="text-xl font-semibold mb-4" id="questionText">
+                            Loading...
+                        </h3>
+                        <div class="space-y-3" id="optionsContainer">
+                            <!-- Options will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <button id="prevBtn" onclick="previousQuestion()" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 disabled:opacity-50" disabled>
+                            ← Sebelumnya
+                        </button>
+                        <button id="nextBtn" onclick="nextQuestion()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                            Selanjutnya →
+                        </button>
+                    </div>
+                </div>
+
+                <div id="quizResults" class="hidden text-center">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h3 class="text-2xl font-bold mb-4">Kuis Selesai!</h3>
+                    <div class="text-4xl font-bold text-blue-600 mb-4" id="finalScore">0/10</div>
+                    <div class="text-lg mb-4" id="scorePercentage">0%</div>
+                    <p class="text-gray-600 mb-6" id="scoreMessage">Loading...</p>
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="restartQuiz()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                            Ulangi Kuis
+                        </button>
+                        <button onclick="showAnswers()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                            Lihat Jawaban
+                        </button>
+                    </div>
+                </div>
+
+                <div id="answerReview" class="hidden">
+                    <h3 class="text-2xl font-bold mb-4">Review Jawaban</h3>
+                    <div id="answerList" class="space-y-4 mb-6">
+                        <!-- Answer review will be loaded here -->
+                    </div>
+                    <button onclick="backToQuiz()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                        Kembali ke Hasil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div> <!-- End of mainContent div -->
+
+    <script>
+        // Global variables
+        let currentTab = 'teori';
+        let currentQuizQuestion = 0;
+        let quizScore = 0;
+        let selectedAnswers = [];
+        let switchOn = true;
+        let multimeterMode = 'voltage';
+        let measurementData = [];
+
+        // Landing page functions
+        function enterLab() {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('mainContent').classList.add('active');
+        }
+
+        function backToHome() {
+            document.getElementById('mainContent').classList.remove('active');
+            document.getElementById('landingPage').style.display = 'flex';
+        }
+
+        // Enhanced Quiz questions
+        const quizQuestions = [
+            {
+                question: "Sebuah resistor 6Ω dihubungkan dengan baterai 12V. Berapa arus yang mengalir?",
+                options: ["1 A", "2 A", "3 A", "4 A"],
+                correct: 1,
+                explanation: "Menggunakan Hukum Ohm: I = V/R = 12V/6Ω = 2A"
+            },
+            {
+                question: "Dua resistor 4Ω dan 6Ω disusun seri. Hambatan totalnya adalah:",
+                options: ["2.4 Ω", "5 Ω", "10 Ω", "24 Ω"],
+                correct: 2,
+                explanation: "Rangkaian seri: R_total = R1 + R2 = 4Ω + 6Ω = 10Ω"
+            },
+            {
+                question: "Daya yang diserap resistor 5Ω dengan arus 3A adalah:",
+                options: ["15 W", "30 W", "45 W", "60 W"],
+                correct: 2,
+                explanation: "P = I²R = (3A)² × 5Ω = 9 × 5 = 45W"
+            },
+            {
+                question: "Dalam rangkaian paralel, yang sama untuk semua cabang adalah:",
+                options: ["Arus", "Hambatan", "Tegangan", "Daya"],
+                correct: 2,
+                explanation: "Dalam rangkaian paralel, tegangan sama di semua cabang"
+            },
+            {
+                question: "Energi listrik yang dikonsumsi lampu 60W selama 5 jam adalah:",
+                options: ["300 Wh", "12 Wh", "65 Wh", "55 Wh"],
+                correct: 0,
+                explanation: "W = P × t = 60W × 5h = 300Wh"
+            },
+            {
+                question: "Dua resistor 3Ω dan 6Ω disusun paralel. Hambatan totalnya adalah:",
+                options: ["9 Ω", "4.5 Ω", "2 Ω", "1.5 Ω"],
+                correct: 2,
+                explanation: "1/R_total = 1/3 + 1/6 = 2/6 + 1/6 = 3/6 = 1/2, maka R_total = 2Ω"
+            },
+            {
+                question: "Hukum Kirchhoff I (KCL) menyatakan bahwa:",
+                options: ["Jumlah tegangan dalam loop = 0", "Jumlah arus masuk = jumlah arus keluar", "V = I × R", "P = V × I"],
+                correct: 1,
+                explanation: "KCL: Jumlah arus yang masuk ke suatu titik sama dengan jumlah arus yang keluar"
+            },
+            {
+                question: "Sebuah pemanas listrik 1000W digunakan selama 2 jam. Energi yang dikonsumsi adalah:",
+                options: ["2000 J", "2 kWh", "500 Wh", "1000 Wh"],
+                correct: 1,
+                explanation: "W = P × t = 1000W × 2h = 2000Wh = 2kWh"
+            },
+            {
+                question: "Faktor yang mempengaruhi hambatan kawat adalah:",
+                options: ["Panjang saja", "Luas penampang saja", "Jenis bahan saja", "Semua jawaban benar"],
+                correct: 3,
+                explanation: "Hambatan dipengaruhi oleh panjang, luas penampang, dan resistivitas bahan"
+            },
+            {
+                question: "Dalam rangkaian seri, jika salah satu komponen rusak maka:",
+                options: ["Komponen lain tetap bekerja", "Semua komponen mati", "Arus bertambah", "Tegangan berkurang"],
+                correct: 1,
+                explanation: "Dalam rangkaian seri, jika satu komponen rusak, arus terputus dan semua komponen mati"
+            }
+        ];
+
+        // Tab switching function
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600', 'bg-blue-50');
+                btn.classList.add('text-gray-600');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Activate button
+            event.target.classList.remove('text-gray-600');
+            event.target.classList.add('text-blue-600', 'border-b-2', 'border-blue-600', 'bg-blue-50');
+            
+            currentTab = tabName;
+        }
+
+        // Enhanced circuit simulation
+        function updateCircuit() {
+            const voltage = parseFloat(document.getElementById('voltage').value);
+            const resistance1 = parseFloat(document.getElementById('resistance1').value);
+            const resistance2 = parseFloat(document.getElementById('resistance2').value);
+            const circuitType = document.getElementById('circuitType').value;
+            
+            // Update display values
+            document.getElementById('voltageValue').textContent = voltage + ' V';
+            document.getElementById('resistance1Value').textContent = resistance1 + ' Ω';
+            document.getElementById('resistance2Value').textContent = resistance2 + ' Ω';
+            document.getElementById('batteryVoltage').textContent = voltage + 'V';
+            document.getElementById('r1Value').textContent = resistance1 + 'Ω';
+            document.getElementById('r2Value').textContent = resistance2 + 'Ω';
+            
+            let totalResistance, totalCurrent, totalPower, energy, efficiency;
+            let i1, i2, p1, p2, v1, v2;
+            
+            if (!switchOn) {
+                // Circuit is off
+                totalCurrent = 0;
+                totalPower = 0;
+                energy = 0;
+                efficiency = 0;
+                i1 = i2 = p1 = p2 = 0;
+                
+                // Hide current flow
+                document.getElementById('currentFlow').style.display = 'none';
+            } else {
+                // Show current flow
+                document.getElementById('currentFlow').style.display = 'block';
+                
+                if (circuitType === 'series') {
+                    // Series circuit
+                    totalResistance = resistance1 + resistance2;
+                    totalCurrent = voltage / totalResistance;
+                    i1 = i2 = totalCurrent;
+                    v1 = i1 * resistance1;
+                    v2 = i2 * resistance2;
+                    p1 = v1 * i1;
+                    p2 = v2 * i2;
+                    totalPower = p1 + p2;
+                    
+                    // Hide parallel wires
+                    document.getElementById('parallelWire1').style.display = 'none';
+                    document.getElementById('parallelWire2').style.display = 'none';
+                    document.getElementById('parallelWire3').style.display = 'none';
+                    document.getElementById('parallelWire4').style.display = 'none';
+                    
+                } else if (circuitType === 'parallel') {
+                    // Parallel circuit
+                    totalResistance = (resistance1 * resistance2) / (resistance1 + resistance2);
+                    totalCurrent = voltage / totalResistance;
+                    v1 = v2 = voltage;
+                    i1 = v1 / resistance1;
+                    i2 = v2 / resistance2;
+                    p1 = v1 * i1;
+                    p2 = v2 * i2;
+                    totalPower = p1 + p2;
+                    
+                    // Show parallel wires
+                    document.getElementById('parallelWire1').style.display = 'block';
+                    document.getElementById('parallelWire2').style.display = 'block';
+                    document.getElementById('parallelWire3').style.display = 'block';
+                    document.getElementById('parallelWire4').style.display = 'block';
+                    
+                } else {
+                    // Mixed circuit (simplified)
+                    totalResistance = resistance1 + (resistance2 / 2);
+                    totalCurrent = voltage / totalResistance;
+                    i1 = totalCurrent;
+                    i2 = totalCurrent / 2;
+                    v1 = i1 * resistance1;
+                    v2 = i2 * resistance2;
+                    p1 = v1 * i1;
+                    p2 = v2 * i2;
+                    totalPower = p1 + p2;
+                }
+                
+                energy = totalPower * 3.6; // Energy per hour in kJ
+                efficiency = Math.min(95, (totalPower / (voltage * totalCurrent)) * 100); // Simplified efficiency
+            }
+            
+            // Update component displays
+            document.getElementById('r1Current').textContent = `I1 = ${i1.toFixed(2)}A`;
+            document.getElementById('r2Current').textContent = `I2 = ${i2.toFixed(2)}A`;
+            document.getElementById('r1Power').textContent = `P1 = ${p1.toFixed(1)}W`;
+            document.getElementById('r2Power').textContent = `P2 = ${p2.toFixed(1)}W`;
+            
+            // Update results
+            document.getElementById('totalCurrentResult').textContent = totalCurrent.toFixed(2);
+            document.getElementById('totalPowerResult').textContent = totalPower.toFixed(1);
+            document.getElementById('totalEnergyResult').textContent = energy.toFixed(1);
+            document.getElementById('totalResistanceResult').textContent = totalResistance.toFixed(1);
+            document.getElementById('efficiencyResult').textContent = efficiency.toFixed(0);
+            
+            // Update SVG text
+            document.getElementById('totalCurrentText').textContent = `I total = ${totalCurrent.toFixed(2)} A`;
+            document.getElementById('totalPowerText').textContent = `P total = ${totalPower.toFixed(1)} W`;
+            
+            // Update electron animation speed based on current
+            const electrons = document.querySelectorAll('.electron');
+            electrons.forEach(electron => {
+                if (switchOn && totalCurrent > 0) {
+                    electron.style.animationDuration = Math.max(0.5, (3 / totalCurrent)) + 's';
+                    electron.style.opacity = '1';
+                } else {
+                    electron.style.opacity = '0';
+                }
+            });
+        }
+
+        // Switch toggle function
+        function toggleSwitch() {
+            switchOn = !switchOn;
+            const switchElement = document.getElementById('switch').querySelector('rect');
+            const switchText = document.getElementById('switchText');
+            
+            if (switchOn) {
+                switchElement.setAttribute('fill', '#fdcb6e');
+                switchText.textContent = 'ON';
+            } else {
+                switchElement.setAttribute('fill', '#636e72');
+                switchText.textContent = 'OFF';
+            }
+            
+            updateCircuit();
+        }
+
+        // Calculator functions
+        function calculateOhm() {
+            const v = parseFloat(document.getElementById('calcV').value);
+            const i = parseFloat(document.getElementById('calcI').value);
+            const r = parseFloat(document.getElementById('calcR').value);
+            
+            let result = '';
+            let missing = 0;
+            
+            if (isNaN(v)) missing++;
+            if (isNaN(i)) missing++;
+            if (isNaN(r)) missing++;
+            
+            if (missing !== 1) {
+                result = 'Masukkan tepat 2 nilai yang diketahui!';
+            } else {
+                if (isNaN(v)) {
+                    const voltage = i * r;
+                    result = `Tegangan (V) = ${voltage.toFixed(2)} V<br>Rumus: V = I × R = ${i} × ${r}`;
+                } else if (isNaN(i)) {
+                    const current = v / r;
+                    result = `Arus (I) = ${current.toFixed(2)} A<br>Rumus: I = V / R = ${v} / ${r}`;
+                } else if (isNaN(r)) {
+                    const resistance = v / i;
+                    result = `Hambatan (R) = ${resistance.toFixed(2)} Ω<br>Rumus: R = V / I = ${v} / ${i}`;
+                }
+            }
+            
+            document.getElementById('ohmResult').classList.remove('hidden');
+            document.getElementById('ohmResultText').innerHTML = result;
+        }
+
+        function calculatePower() {
+            const p = parseFloat(document.getElementById('calcP').value);
+            const v = parseFloat(document.getElementById('calcPV').value);
+            const i = parseFloat(document.getElementById('calcPI').value);
+            
+            let result = '';
+            let missing = 0;
+            
+            if (isNaN(p)) missing++;
+            if (isNaN(v)) missing++;
+            if (isNaN(i)) missing++;
+            
+            if (missing !== 1) {
+                result = 'Masukkan tepat 2 nilai yang diketahui!';
+            } else {
+                if (isNaN(p)) {
+                    const power = v * i;
+                    result = `Daya (P) = ${power.toFixed(2)} W<br>Rumus: P = V × I = ${v} × ${i}`;
+                } else if (isNaN(v)) {
+                    const voltage = p / i;
+                    result = `Tegangan (V) = ${voltage.toFixed(2)} V<br>Rumus: V = P / I = ${p} / ${i}`;
+                } else if (isNaN(i)) {
+                    const current = p / v;
+                    result = `Arus (I) = ${current.toFixed(2)} A<br>Rumus: I = P / V = ${p} / ${v}`;
+                }
+            }
+            
+            document.getElementById('powerResult').classList.remove('hidden');
+            document.getElementById('powerResultText').innerHTML = result;
+        }
+
+        function addSeriesInput() {
+            const container = document.getElementById('seriesInputs');
+            const inputCount = container.children.length;
+            const newInput = document.createElement('input');
+            newInput.type = 'number';
+            newInput.className = 'series-input w-full p-2 border rounded';
+            newInput.placeholder = `R${inputCount + 1} (Ohm)`;
+            container.appendChild(newInput);
+        }
+
+        function removeSeriesInput() {
+            const container = document.getElementById('seriesInputs');
+            if (container.children.length > 2) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        function calculateSeries() {
+            const inputs = document.querySelectorAll('.series-input');
+            let total = 0;
+            let values = [];
+            let allFilled = true;
+            
+            inputs.forEach((input, index) => {
+                const value = parseFloat(input.value);
+                if (isNaN(value)) {
+                    allFilled = false;
+                } else {
+                    total += value;
+                    values.push(value);
+                }
+            });
+            
+            if (!allFilled) {
+                document.getElementById('seriesResultText').innerHTML = 'Masukkan semua nilai hambatan!';
+            } else {
+                const calculation = values.join(' + ');
+                document.getElementById('seriesResultText').innerHTML = 
+                    `R total = ${calculation} = ${total.toFixed(2)} Ω<br>Rumus: R_seri = R1 + R2 + R3 + ...`;
+            }
+            
+            document.getElementById('seriesResult').classList.remove('hidden');
+        }
+
+        function addParallelInput() {
+            const container = document.getElementById('parallelInputs');
+            const inputCount = container.children.length;
+            const newInput = document.createElement('input');
+            newInput.type = 'number';
+            newInput.className = 'parallel-input w-full p-2 border rounded';
+            newInput.placeholder = `R${inputCount + 1} (Ohm)`;
+            container.appendChild(newInput);
+        }
+
+        function removeParallelInput() {
+            const container = document.getElementById('parallelInputs');
+            if (container.children.length > 2) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        function calculateParallel() {
+            const inputs = document.querySelectorAll('.parallel-input');
+            let reciprocalSum = 0;
+            let values = [];
+            let allFilled = true;
+            
+            inputs.forEach((input, index) => {
+                const value = parseFloat(input.value);
+                if (isNaN(value) || value === 0) {
+                    allFilled = false;
+                } else {
+                    reciprocalSum += 1 / value;
+                    values.push(value);
+                }
+            });
+            
+            if (!allFilled) {
+                document.getElementById('parallelResultText').innerHTML = 'Masukkan semua nilai hambatan (tidak boleh 0)!';
+            } else {
+                const total = 1 / reciprocalSum;
+                const calculation = values.map(v => `1/${v}`).join(' + ');
+                document.getElementById('parallelResultText').innerHTML = 
+                    `1/R total = ${calculation} = ${reciprocalSum.toFixed(4)}<br>R total = ${total.toFixed(2)} Ω`;
+            }
+            
+            document.getElementById('parallelResult').classList.remove('hidden');
+        }
+
+        function calculateCost() {
+            const power = parseFloat(document.getElementById('devicePower').value);
+            const hours = parseFloat(document.getElementById('usageHours').value);
+            const rate = parseFloat(document.getElementById('electricRate').value);
+            
+            if (isNaN(power) || isNaN(hours) || isNaN(rate)) {
+                document.getElementById('costResultText').innerHTML = 'Masukkan semua nilai!';
+            } else {
+                const dailyEnergy = (power * hours) / 1000; // kWh per day
+                const dailyCost = dailyEnergy * rate;
+                const monthlyCost = dailyCost * 30;
+                const yearlyEnergy = dailyEnergy * 365;
+                const yearlyCost = dailyCost * 365;
+                
+                document.getElementById('costResultText').innerHTML = 
+                    `Konsumsi harian: ${dailyEnergy.toFixed(2)} kWh<br>
+                     Biaya harian: Rp ${dailyCost.toLocaleString('id-ID')}<br>
+                     Biaya bulanan: Rp ${monthlyCost.toLocaleString('id-ID')}<br>
+                     Konsumsi tahunan: ${yearlyEnergy.toFixed(0)} kWh<br>
+                     Biaya tahunan: Rp ${yearlyCost.toLocaleString('id-ID')}`;
+            }
+            
+            document.getElementById('costResult').classList.remove('hidden');
+        }
+
+        // Enhanced experiment functions
+        function startExperiment(expNumber) {
+            const resultsDiv = document.getElementById('experimentResults');
+            
+            switch(expNumber) {
+                case 1:
+                    resultsDiv.innerHTML = `
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-3">Eksperimen 1: Verifikasi Hukum Ohm</h3>
+                            <div class="mb-4">
+                                <h4 class="font-medium mb-2">Data Pengukuran (R = 5Ω tetap):</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm border-collapse border border-gray-300">
+                                        <thead>
+                                            <tr class="bg-gray-100">
+                                                <th class="border border-gray-300 p-2">Tegangan (V)</th>
+                                                <th class="border border-gray-300 p-2">Arus Terukur (A)</th>
+                                                <th class="border border-gray-300 p-2">Arus Teoritis (A)</th>
+                                                <th class="border border-gray-300 p-2">Error (%)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border border-gray-300 p-2">2</td><td class="border border-gray-300 p-2">0.40</td><td class="border border-gray-300 p-2">0.40</td><td class="border border-gray-300 p-2">0.0</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">4</td><td class="border border-gray-300 p-2">0.80</td><td class="border border-gray-300 p-2">0.80</td><td class="border border-gray-300 p-2">0.0</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">6</td><td class="border border-gray-300 p-2">1.20</td><td class="border border-gray-300 p-2">1.20</td><td class="border border-gray-300 p-2">0.0</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">8</td><td class="border border-gray-300 p-2">1.60</td><td class="border border-gray-300 p-2">1.60</td><td class="border border-gray-300 p-2">0.0</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">10</td><td class="border border-gray-300 p-2">2.00</td><td class="border border-gray-300 p-2">2.00</td><td class="border border-gray-300 p-2">0.0</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-green-100 rounded">
+                                <p class="text-green-800 font-medium">✅ Kesimpulan: Hubungan V dan I linear dengan gradien = R (Hukum Ohm terbukti)</p>
+                                <p class="text-green-700 text-sm mt-1">Koefisien korelasi: r = 1.000 (hubungan linear sempurna)</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 2:
+                    resultsDiv.innerHTML = `
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-3">Eksperimen 2: Seri vs Paralel</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="bg-white p-3 rounded border">
+                                    <h4 class="font-medium mb-2 text-blue-600">Rangkaian Seri (R1=R2=4Ω)</h4>
+                                    <p>• R_total = 4 + 4 = 8Ω</p>
+                                    <p>• I_total = 12V / 8Ω = 1.5A</p>
+                                    <p>• I1 = I2 = 1.5A</p>
+                                    <p>• V1 = V2 = 6V</p>
+                                    <p>• P_total = 18W</p>
+                                </div>
+                                <div class="bg-white p-3 rounded border">
+                                    <h4 class="font-medium mb-2 text-green-600">Rangkaian Paralel (R1=R2=4Ω)</h4>
+                                    <p>• R_total = 4||4 = 2Ω</p>
+                                    <p>• I_total = 12V / 2Ω = 6A</p>
+                                    <p>• I1 = I2 = 3A</p>
+                                    <p>• V1 = V2 = 12V</p>
+                                    <p>• P_total = 72W</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-green-100 rounded">
+                                <p class="text-green-800 font-medium">✅ Kesimpulan: Paralel memberikan hambatan total lebih kecil dan daya lebih besar</p>
+                                <p class="text-green-700 text-sm mt-1">Rasio daya paralel:seri = 4:1 untuk resistor identik</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 3:
+                    resultsDiv.innerHTML = `
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-3">Eksperimen 3: Analisis Daya</h3>
+                            <div class="mb-4">
+                                <h4 class="font-medium mb-2">Pengaruh Hambatan terhadap Daya (V = 12V tetap):</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm border-collapse border border-gray-300">
+                                        <thead>
+                                            <tr class="bg-gray-100">
+                                                <th class="border border-gray-300 p-2">R (Ω)</th>
+                                                <th class="border border-gray-300 p-2">I (A)</th>
+                                                <th class="border border-gray-300 p-2">P = V²/R (W)</th>
+                                                <th class="border border-gray-300 p-2">P = I²R (W)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border border-gray-300 p-2">2</td><td class="border border-gray-300 p-2">6.0</td><td class="border border-gray-300 p-2">72</td><td class="border border-gray-300 p-2">72</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">3</td><td class="border border-gray-300 p-2">4.0</td><td class="border border-gray-300 p-2">48</td><td class="border border-gray-300 p-2">48</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">4</td><td class="border border-gray-300 p-2">3.0</td><td class="border border-gray-300 p-2">36</td><td class="border border-gray-300 p-2">36</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">6</td><td class="border border-gray-300 p-2">2.0</td><td class="border border-gray-300 p-2">24</td><td class="border border-gray-300 p-2">24</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">12</td><td class="border border-gray-300 p-2">1.0</td><td class="border border-gray-300 p-2">12</td><td class="border border-gray-300 p-2">12</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-purple-100 rounded">
+                                <p class="text-purple-800 font-medium">✅ Kesimpulan: Daya berbanding terbalik dengan hambatan (P ∝ 1/R)</p>
+                                <p class="text-purple-700 text-sm mt-1">Untuk efisiensi maksimum, gunakan hambatan rendah dengan tegangan tinggi</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 4:
+                    resultsDiv.innerHTML = `
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-lg mb-3">Eksperimen 4: Efek Suhu pada Hambatan</h3>
+                            <div class="mb-4">
+                                <h4 class="font-medium mb-2">Hambatan Kawat Tembaga vs Suhu:</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm border-collapse border border-gray-300">
+                                        <thead>
+                                            <tr class="bg-gray-100">
+                                                <th class="border border-gray-300 p-2">Suhu (°C)</th>
+                                                <th class="border border-gray-300 p-2">R (Ω)</th>
+                                                <th class="border border-gray-300 p-2">ΔR/R₀ (%)</th>
+                                                <th class="border border-gray-300 p-2">I (A)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border border-gray-300 p-2">20</td><td class="border border-gray-300 p-2">5.00</td><td class="border border-gray-300 p-2">0.0</td><td class="border border-gray-300 p-2">2.40</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">40</td><td class="border border-gray-300 p-2">5.39</td><td class="border border-gray-300 p-2">+7.8</td><td class="border border-gray-300 p-2">2.23</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">60</td><td class="border border-gray-300 p-2">5.78</td><td class="border border-gray-300 p-2">+15.6</td><td class="border border-gray-300 p-2">2.08</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">80</td><td class="border border-gray-300 p-2">6.17</td><td class="border border-gray-300 p-2">+23.4</td><td class="border border-gray-300 p-2">1.94</td></tr>
+                                            <tr><td class="border border-gray-300 p-2">100</td><td class="border border-gray-300 p-2">6.56</td><td class="border border-gray-300 p-2">+31.2</td><td class="border border-gray-300 p-2">1.83</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-red-100 rounded">
+                                <p class="text-red-800 font-medium">✅ Kesimpulan: Hambatan logam meningkat dengan suhu (koefisien suhu positif)</p>
+                                <p class="text-red-700 text-sm mt-1">α_tembaga ≈ 0.0039/°C - Penting untuk desain sistem kelistrikan</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        function resetExperiment(expNumber) {
+            const resultsDiv = document.getElementById('experimentResults');
+            resultsDiv.innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <div class="text-4xl mb-2">🔬</div>
+                    <p>Eksperimen ${expNumber} telah direset. Klik "Mulai Eksperimen" untuk memulai lagi.</p>
+                </div>
+            `;
+        }
+
+        // Multimeter functions
+        function setMultimeterMode(mode) {
+            multimeterMode = mode;
+            const display = document.getElementById('multimeterDisplay');
+            const unit = document.getElementById('multimeterUnit');
+            
+            // Reset display
+            display.textContent = '0.000';
+            
+            switch(mode) {
+                case 'voltage':
+                    unit.textContent = 'V DC';
+                    break;
+                case 'current':
+                    unit.textContent = 'A DC';
+                    break;
+                case 'resistance':
+                    unit.textContent = 'Ω';
+                    break;
+            }
+            
+            // Update button styles
+            document.querySelectorAll('.multimeter-btn').forEach(btn => {
+                btn.classList.remove('bg-red-700', 'bg-yellow-700', 'bg-blue-700');
+            });
+            
+            if (mode === 'voltage') {
+                event.target.classList.add('bg-red-700');
+            } else if (mode === 'current') {
+                event.target.classList.add('bg-yellow-700');
+            } else {
+                event.target.classList.add('bg-blue-700');
+            }
+        }
+
+        function measureValue() {
+            const value = parseFloat(document.getElementById('actualValue').value);
+            const unit = document.getElementById('actualUnit').value;
+            
+            if (isNaN(value)) {
+                alert('Masukkan nilai yang valid!');
+                return;
+            }
+            
+            // Simulate measurement with small random error
+            const error = (Math.random() - 0.5) * 0.02; // ±1% error
+            const measuredValue = value * (1 + error);
+            
+            // Update display
+            document.getElementById('multimeterDisplay').textContent = measuredValue.toFixed(3);
+            document.getElementById('multimeterUnit').textContent = unit + ' DC';
+            
+            // Add to log
+            const timestamp = new Date().toLocaleTimeString('id-ID');
+            const logEntry = {
+                time: timestamp,
+                mode: multimeterMode,
+                value: measuredValue,
+                unit: unit,
+                actual: value,
+                error: ((measuredValue - value) / value * 100).toFixed(2)
+            };
+            
+            measurementData.push(logEntry);
+            updateMeasurementLog();
+            updateStatistics();
+        }
+
+        function updateMeasurementLog() {
+            const logDiv = document.getElementById('measurementLog');
+            
+            if (measurementData.length === 0) {
+                logDiv.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <div class="text-4xl mb-2">📊</div>
+                        <p>Belum ada pengukuran</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let logHTML = '';
+            measurementData.slice(-10).reverse().forEach((entry, index) => {
+                logHTML += `
+                    <div class="bg-gray-50 p-3 rounded border-l-4 border-blue-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-medium">${entry.value.toFixed(3)} ${entry.unit}</div>
+                                <div class="text-sm text-gray-600">Waktu: ${entry.time}</div>
+                                <div class="text-xs text-gray-500">Error: ${entry.error}%</div>
+                            </div>
+                            <div class="text-xs text-gray-400">#${measurementData.length - index}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            logDiv.innerHTML = logHTML;
+        }
+
+        function updateStatistics() {
+            if (measurementData.length === 0) return;
+            
+            const values = measurementData.map(entry => entry.value);
+            const total = values.reduce((sum, val) => sum + val, 0);
+            const average = total / values.length;
+            const max = Math.max(...values);
+            const min = Math.min(...values);
+            
+            document.getElementById('totalMeasurements').textContent = measurementData.length;
+            document.getElementById('averageValue').textContent = average.toFixed(3);
+            document.getElementById('maxValue').textContent = max.toFixed(3);
+            document.getElementById('minValue').textContent = min.toFixed(3);
+        }
+
+        function clearLog() {
+            measurementData = [];
+            updateMeasurementLog();
+            updateStatistics();
+            
+            // Reset statistics display
+            document.getElementById('totalMeasurements').textContent = '0';
+            document.getElementById('averageValue').textContent = '-';
+            document.getElementById('maxValue').textContent = '-';
+            document.getElementById('minValue').textContent = '-';
+        }
+
+        function exportLog() {
+            if (measurementData.length === 0) {
+                alert('Tidak ada data untuk diekspor!');
+                return;
+            }
+            
+            let csvContent = 'Waktu,Mode,Nilai,Satuan,Nilai Aktual,Error (%)\n';
+            measurementData.forEach(entry => {
+                csvContent += `${entry.time},${entry.mode},${entry.value},${entry.unit},${entry.actual},${entry.error}\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'pengukuran_multimeter.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Enhanced quiz functions
+        function selectAnswer(answerIndex) {
+            // Remove previous selection
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-100');
+                btn.classList.add('border-gray-200');
+            });
+            
+            // Highlight selected answer
+            const selectedBtn = document.querySelectorAll('.option-btn')[answerIndex];
+            selectedBtn.classList.remove('border-gray-200');
+            selectedBtn.classList.add('border-blue-500', 'bg-blue-100');
+            
+            selectedAnswers[currentQuizQuestion] = answerIndex;
+        }
+
+        function nextQuestion() {
+            if (currentQuizQuestion < quizQuestions.length - 1) {
+                currentQuizQuestion++;
+                updateQuizDisplay();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuizQuestion > 0) {
+                currentQuizQuestion--;
+                updateQuizDisplay();
+            }
+        }
+
+        function updateQuizDisplay() {
+            const question = quizQuestions[currentQuizQuestion];
+            
+            document.getElementById('currentQuestion').textContent = currentQuizQuestion + 1;
+            document.getElementById('totalQuestions').textContent = quizQuestions.length;
+            document.getElementById('questionText').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn w-full text-left p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all duration-200';
+                button.textContent = String.fromCharCode(65 + index) + '. ' + option;
+                button.onclick = () => selectAnswer(index);
+                
+                if (selectedAnswers[currentQuizQuestion] === index) {
+                    button.classList.remove('border-gray-200');
+                    button.classList.add('border-blue-500', 'bg-blue-100');
+                }
+                
+                optionsContainer.appendChild(button);
+            });
+            
+            // Update progress bar
+            const progress = ((currentQuizQuestion + 1) / quizQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentQuizQuestion === 0;
+            document.getElementById('nextBtn').textContent = 
+                currentQuizQuestion === quizQuestions.length - 1 ? 'Selesai' : 'Selanjutnya →';
+        }
+
+        function finishQuiz() {
+            // Calculate score
+            quizScore = 0;
+            selectedAnswers.forEach((answer, index) => {
+                if (answer === quizQuestions[index].correct) {
+                    quizScore++;
+                }
+            });
+            
+            // Show results
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('quizResults').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = quizScore + '/' + quizQuestions.length;
+            
+            const percentage = Math.round((quizScore / quizQuestions.length) * 100);
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+            
+            let message = '';
+            if (percentage >= 90) {
+                message = 'Luar biasa! Anda menguasai materi listrik dinamis dengan sangat baik! 🌟';
+            } else if (percentage >= 80) {
+                message = 'Bagus sekali! Anda memahami konsep listrik dinamis dengan baik. 👍';
+            } else if (percentage >= 70) {
+                message = 'Cukup baik! Pelajari kembali beberapa konsep untuk hasil yang lebih baik. 📚';
+            } else if (percentage >= 60) {
+                message = 'Lumayan! Masih perlu belajar lebih giat lagi. 💪';
+            } else {
+                message = 'Perlu belajar lebih keras! Ulangi materi dan coba lagi! 📖';
+            }
+            
+            document.getElementById('scoreMessage').textContent = message;
+        }
+
+        function restartQuiz() {
+            currentQuizQuestion = 0;
+            quizScore = 0;
+            selectedAnswers = [];
+            
+            document.getElementById('quizContainer').classList.remove('hidden');
+            document.getElementById('quizResults').classList.add('hidden');
+            document.getElementById('answerReview').classList.add('hidden');
+            document.getElementById('score').textContent = '0';
+            
+            updateQuizDisplay();
+        }
+
+        function showAnswers() {
+            document.getElementById('quizResults').classList.add('hidden');
+            document.getElementById('answerReview').classList.remove('hidden');
+            
+            const answerList = document.getElementById('answerList');
+            let answersHTML = '';
+            
+            quizQuestions.forEach((question, index) => {
+                const userAnswer = selectedAnswers[index];
+                const correctAnswer = question.correct;
+                const isCorrect = userAnswer === correctAnswer;
+                
+                answersHTML += `
+                    <div class="border rounded-lg p-4 ${isCorrect ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50'}">
+                        <div class="flex items-start justify-between mb-2">
+                            <h4 class="font-semibold text-lg">Soal ${index + 1}</h4>
+                            <span class="px-2 py-1 rounded text-sm font-medium ${isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}">
+                                ${isCorrect ? 'Benar' : 'Salah'}
+                            </span>
+                        </div>
+                        <p class="mb-3">${question.question}</p>
+                        <div class="space-y-1 mb-3">
+                            ${question.options.map((option, optIndex) => {
+                                let className = 'p-2 rounded text-sm ';
+                                if (optIndex === correctAnswer) {
+                                    className += 'bg-green-200 text-green-800 font-medium';
+                                } else if (optIndex === userAnswer && userAnswer !== correctAnswer) {
+                                    className += 'bg-red-200 text-red-800';
+                                } else {
+                                    className += 'bg-gray-100 text-gray-700';
+                                }
+                                return `<div class="${className}">${String.fromCharCode(65 + optIndex)}. ${option}</div>`;
+                            }).join('')}
+                        </div>
+                        <div class="text-sm text-gray-600 bg-blue-50 p-2 rounded">
+                            <strong>Penjelasan:</strong> ${question.explanation}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            answerList.innerHTML = answersHTML;
+        }
+
+        function backToQuiz() {
+            document.getElementById('answerReview').classList.add('hidden');
+            document.getElementById('quizResults').classList.remove('hidden');
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCircuit();
+            updateQuizDisplay();
+            
+            // Set initial multimeter mode
+            setMultimeterMode('voltage');
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98472a7f41ef243f',t:'MTc1ODc2ODEyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
